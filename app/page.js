@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../components/theme-toggle";
 
 const POLL_MS = 4000;
 const MAX_POLLS = 150;
@@ -35,8 +36,8 @@ function Stamp({ size = 13 }) {
 function Mark() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="1" y="1" width="22" height="22" rx="7" fill="#fff" />
-      <path d="M7 7h2.6l8 10H15L7 7Zm10 0-4 5m-6 5 4-5" stroke="#000" strokeWidth="2" strokeLinecap="round" />
+      <rect className="mark-box" x="1" y="1" width="22" height="22" rx="7" />
+      <path className="mark-line" d="M7 7h2.6l8 10H15L7 7Zm10 0-4 5m-6 5 4-5" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -309,6 +310,7 @@ export default function Home() {
           </div>
           <div className="nav-right">
             <span className="nav-user">private access</span>
+            <ThemeToggle />
             <button className="btn" type="button" onClick={signOut}>
               Sign out
             </button>
@@ -606,14 +608,20 @@ export default function Home() {
             )}
 
             {usernameText ? (
-              <div className="panel-body" style={{ borderTop: "1px solid #1a1a1a" }}>
-                <span className="panel-title">Plain text output</span>
+              <div className="output">
+                <div className="output-head">
+                  <span className="panel-title">Plain text output</span>
+                  <span className="output-meta">
+                    {rows.length} username{rows.length === 1 ? "" : "s"} · one per line · click to select all
+                  </span>
+                </div>
                 <textarea
-                  className="textarea"
-                  style={{ marginTop: 10, minHeight: 110 }}
+                  className="output-text"
                   value={usernameText}
                   readOnly
                   spellCheck={false}
+                  onFocus={(event) => event.target.select()}
+                  aria-label="Usernames, one per line"
                 />
               </div>
             ) : null}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../../components/theme-toggle";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,12 +37,13 @@ export default function LoginPage() {
 
   return (
     <main className="login">
+      <ThemeToggle className="login-theme" />
       <form className="login-card" onSubmit={submit}>
         <div className="login-mark" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path
+              className="mark-line"
               d="M4 4h4l12 16h-4L4 4Zm16 0-6.2 7.4M4 20l6.3-7.5"
-              stroke="#000"
               strokeWidth="2.6"
               strokeLinecap="round"
             />
