@@ -46,9 +46,10 @@ export default function Home() {
 
   const [urlsText, setUrlsText] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(true);
-  const [minFollowers, setMinFollowers] = useState(1000);
+  const [minFollowersOn, setMinFollowersOn] = useState(true);
+  const [minFollowersInput, setMinFollowersInput] = useState("1000");
   const [dedupe, setDedupe] = useState(true);
-  const [maxItems, setMaxItems] = useState(500);
+  const [maxItemsInput, setMaxItemsInput] = useState("500");
 
   const [scan, setScan] = useState(null);
   const [scanning, setScanning] = useState(false);
@@ -137,7 +138,7 @@ export default function Home() {
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ urls, maxItems: Number(maxItems) || undefined }),
+        body: JSON.stringify({ urls, maxItems: perPostLimit }),
       });
       const data = await response.json().catch(() => ({}));
       if (ticket !== ticketRef.current) return;
@@ -180,7 +181,8 @@ export default function Home() {
     router.refresh();
   }
 
-  const threshold = Number(minFollowers) || 0;
+  const threshold = minFollowersOn ? Math.max(0, Number.parseInt(minFollowersInput, 10) || 0) : 0;
+  const perPostLimit = Math.min(2000, Math.max(25, Number.parseInt(maxItemsInput, 10) || 500));
 
   const passes = useCallback(
     (author) => {
@@ -355,56 +357,66 @@ export default function Home() {
             />
 
             <div className="controls">
-              <label className={`switch${verifiedOnly ? " on" : ""}`}>
+              <div className={`switch${verifiedOnly ? " on" : ""}`}>
                 <input
+                  id="filter-verified"
                   type="checkbox"
                   checked={verifiedOnly}
                   onChange={(event) => setVerifiedOnly(event.target.checked)}
                 />
-                X verified only
-              </label>
+                <label htmlFor="filter-verified">X verified only</label>
+              </div>
 
-              <label className={`switch${threshold > 0 ? " on" : ""}`}>
+              <div className={`switch${minFollowersOn ? " on" : ""}`}>
                 <input
+                  id="filter-followers"
                   type="checkbox"
-                  checked={threshold > 0}
-                  onChange={(event) => setMinFollowers(event.target.checked ? 1000 : 0)}
+                  checked={minFollowersOn}
+                  onChange={(event) => setMinFollowersOn(event.target.checked)}
                 />
-                Min followers
+                <label htmlFor="filter-followers">Min followers</label>
                 <input
+                  id="min-followers-value"
                   className="number"
                   type="number"
                   min="0"
                   step="100"
-                  value={minFollowers}
-                  onChange={(event) => setMinFollowers(Math.max(0, Number(event.target.value) || 0))}
-                  onClick={(event) => event.preventDefault()}
+                  inputMode="numeric"
+                  value={minFollowersInput}
+                  onChange={(event) => setMinFollowersInput(event.target.value)}
+                  onBlur={() =>
+                    setMinFollowersInput(String(Math.max(0, Number.parseInt(minFollowersInput, 10) || 0)))
+                  }
                   aria-label="Minimum followers"
                 />
-              </label>
+              </div>
 
-              <label className={`switch${dedupe ? " on" : ""}`}>
+              <div className={`switch${dedupe ? " on" : ""}`}>
                 <input
+                  id="filter-dedupe"
                   type="checkbox"
                   checked={dedupe}
                   onChange={(event) => setDedupe(event.target.checked)}
                 />
-                De-duplicate
-              </label>
+                <label htmlFor="filter-dedupe">De-duplicate</label>
+              </div>
 
-              <label className="switch on">
-                Max replies / post
+              <div className="switch on">
+                <label htmlFor="max-replies-value">Max replies / post</label>
                 <input
+                  id="max-replies-value"
                   className="number"
                   type="number"
                   min="25"
                   max="2000"
                   step="25"
-                  value={maxItems}
-                  onChange={(event) => setMaxItems(Number(event.target.value) || 500)}
+                  inputMode="numeric"
+                  value={maxItemsInput}
+                  onChange={(event) => setMaxItemsInput(event.target.value)}
+                  onBlur={() => setMaxItemsInput(String(perPostLimit))}
                   aria-label="Maximum replies per post"
                 />
-              </label>
+              </div>
             </div>
 
             <div className="actions">

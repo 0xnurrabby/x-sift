@@ -306,11 +306,10 @@ textarea {
   gap: 9px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 8px 14px 8px 10px;
+  padding: 6px 12px 6px 10px;
   font-family: var(--mono);
   font-size: 12px;
   color: var(--muted);
-  cursor: pointer;
   user-select: none;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
@@ -324,8 +323,15 @@ textarea {
   border-color: #404040;
 }
 
-.switch input {
+.switch label {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.switch input[type="checkbox"] {
   appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
   width: 14px;
   height: 14px;
   border: 1px solid var(--faint);
@@ -333,15 +339,16 @@ textarea {
   margin: 0;
   position: relative;
   cursor: pointer;
+  background: transparent;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.switch input:checked {
+.switch input[type="checkbox"]:checked {
   background: var(--fg);
   border-color: var(--fg);
 }
 
-.switch input:checked::after {
+.switch input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
   left: 4px;
@@ -354,19 +361,32 @@ textarea {
 }
 
 .number {
-  width: 84px;
-  background: transparent;
+  flex: 0 0 auto;
+  width: 78px;
+  min-width: 78px;
+  height: 27px;
+  background: #000000;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 0 9px;
   font-family: var(--mono);
   font-size: 12px;
+  color: var(--fg);
   text-align: right;
+  font-variant-numeric: tabular-nums;
   outline: none;
+  cursor: text;
+  transition: border-color 0.15s ease;
 }
 
 .number:focus {
-  border-color: #525252;
+  border-color: #737373;
+}
+
+.number::-webkit-outer-spin-button,
+.number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .spacer {
